@@ -42,56 +42,45 @@ document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
 // ===== VIDEO CAROUSEL =====
 (function() {
-  const track = document.getElementById('vidTrack');
-  if (!track) return;
-
-  const slides = Array.from(track.querySelectorAll('.vid-slide'));
+  const slides = Array.from(document.querySelectorAll('.vid-slide'));
   const dots   = Array.from(document.querySelectorAll('.vid-dot'));
   const btnPrev = document.getElementById('vidPrev');
   const btnNext = document.getElementById('vidNext');
+  if (!slides.length) return;
+
   let current = 0;
 
-  function getOffset(index) {
-    // Center the active slide inside the wrapper
-    const wrap = track.parentElement;
-    const wrapW = wrap.offsetWidth;
-    const slideW = slides[0].offsetWidth;
-    const gap = 24;
-    // total width of slides before current
-    let offset = 0;
-    for (let i = 0; i < index; i++) {
-      offset += slides[i].offsetWidth + gap;
-    }
-    // shift so active slide is centered
-    const center = offset - (wrapW / 2) + (slideW / 2);
-    return Math.max(0, center);
-  }
-
   function goTo(index) {
+    // Pause the current video
+    const curVideo = slides[current].querySelector('video');
+    if (curVideo) curVideo.pause();
+
     slides[current].classList.remove('active');
-    dots[current].classList.remove('active');
+    if (dots[current]) dots[current].classList.remove('active');
+
     current = index;
+
     slides[current].classList.add('active');
-    dots[current].classList.add('active');
-    track.style.transform = `translateX(-${getOffset(current)}px)`;
-    btnPrev.disabled = current === 0;
-    btnNext.disabled = current === slides.length - 1;
+    if (dots[current]) dots[current].classList.add('active');
+
+    // Play and autoplay the new slide's video
+    const newVideo = slides[current].querySelector('video');
+    if (newVideo) {
+      newVideo.currentTime = 0;
+      newVideo.play().catch(() => {});
+    }
+
+    if (btnPrev) btnPrev.disabled = current === 0;
+    if (btnNext) btnNext.disabled = current === slides.length - 1;
   }
 
-  btnPrev.addEventListener('click', () => { if (current > 0) goTo(current - 1); });
-  btnNext.addEventListener('click', () => { if (current < slides.length - 1) goTo(current + 1); });
+  if (btnPrev) btnPrev.addEventListener('click', () => { if (current > 0) goTo(current - 1); });
+  if (btnNext) btnNext.addEventListener('click', () => { if (current < slides.length - 1) goTo(current + 1); });
 
-  dots.forEach(dot => {
-    dot.addEventListener('click', () => goTo(parseInt(dot.dataset.dot)));
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => goTo(i));
   });
 
-  slides.forEach((slide, i) => {
-    slide.addEventListener('click', () => { if (i !== current) goTo(i); });
-  });
-
-  // Recalc on resize
-  window.addEventListener('resize', () => goTo(current));
-
-  // Init
+  // Init — play first video
   goTo(0);
 })();
