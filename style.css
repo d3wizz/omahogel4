@@ -1096,7 +1096,7 @@ footer span { color: var(--gold-light); }
 }
 
 .progress-section .container {
-  max-width: 900px;
+  max-width: 960px;
   margin: 0 auto;
   position: relative;
 }
@@ -1107,119 +1107,101 @@ footer span { color: var(--gold-light); }
   border: 1px solid rgba(200,148,42,0.35);
 }
 
-.progress-section .section-title {
-  color: #fff;
-}
+.progress-section .section-title { color: #fff; }
+.progress-section .section-desc { color: rgba(255,255,255,0.7); }
 
-.progress-section .section-desc {
-  color: rgba(255,255,255,0.7);
-}
-
-/* Carousel wrapper */
+/* ===== NEW FULL-WIDTH VIDEO CAROUSEL ===== */
 .vid-carousel {
   position: relative;
-  margin-top: 40px;
+  margin-top: 24px;
 }
 
-.vid-track-wrap {
-  overflow: hidden;
+/* Stage = the visible window */
+.vid-stage {
+  position: relative;
   width: 100%;
-  padding: 20px 0 30px;
-}
-
-.vid-track {
-  display: flex;
-  gap: 24px;
-  transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
-  align-items: center;
-}
-
-/* Each slide */
-.vid-slide {
-  flex: 0 0 calc(70% - 12px);
-  max-width: 560px;
   border-radius: 20px;
   overflow: hidden;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  transition: transform 0.5s cubic-bezier(0.4,0,0.2,1), box-shadow 0.5s, opacity 0.5s;
-  opacity: 0.45;
-  transform: scale(0.88);
-  cursor: pointer;
+  background: #000;
+  aspect-ratio: 16/9;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 0 2px rgba(200,148,42,0.3);
+}
+
+/* Each slide stacks on top of each other */
+.vid-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
 }
 
 .vid-slide.active {
   opacity: 1;
-  transform: scale(1);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 2px var(--gold);
+  pointer-events: auto;
 }
 
-.vid-slide video,
-.vid-slide iframe {
+.vid-slide video {
   width: 100%;
-  aspect-ratio: 16/9;
+  height: 100%;
+  object-fit: cover;
   display: block;
-  border: none;
 }
 
+/* Caption overlaid at bottom */
 .vid-caption {
-  padding: 14px 18px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 36px 20px 16px;
   font-size: 14px;
-  font-weight: 600;
-  color: rgba(255,255,255,0.85);
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
   line-height: 1.5;
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  background: rgba(0,0,0,0.2);
+  letter-spacing: 0.3px;
 }
 
-.vid-caption::before {
-  content: '🎬';
-  font-size: 15px;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-
-/* Nav buttons */
-.vid-nav {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 24px;
-}
-
-.vid-btn {
+/* Arrow buttons overlaid on the video */
+.vid-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  border: 2px solid rgba(200,148,42,0.5);
-  background: rgba(200,148,42,0.1);
+  border: 2px solid rgba(232,184,75,0.6);
+  background: rgba(0,0,0,0.45);
   color: var(--gold-light);
-  font-size: 20px;
+  font-size: 22px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.25s;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(6px);
+  z-index: 10;
+  line-height: 1;
 }
 
-.vid-btn:hover {
+.vid-arrow-left  { left: 16px; }
+.vid-arrow-right { right: 16px; }
+
+.vid-arrow:hover {
   background: var(--gold);
   border-color: var(--gold);
   color: #fff;
-  transform: scale(1.1);
+  transform: translateY(-50%) scale(1.1);
 }
 
-.vid-btn:disabled {
-  opacity: 0.3;
+.vid-arrow:disabled {
+  opacity: 0.2;
   cursor: not-allowed;
-  transform: none;
+  transform: translateY(-50%) scale(1);
 }
 
-/* Dots indicator */
+/* Dots */
 .vid-dots {
   display: flex;
   justify-content: center;
@@ -1245,7 +1227,8 @@ footer span { color: var(--gold-light); }
 }
 
 @media (max-width: 640px) {
-  .vid-slide {
-    flex: 0 0 85%;
-  }
+  .vid-stage { aspect-ratio: 9/16; border-radius: 14px; }
+  .vid-arrow { width: 38px; height: 38px; font-size: 16px; }
+  .vid-arrow-left  { left: 8px; }
+  .vid-arrow-right { right: 8px; }
 }
